@@ -1,0 +1,7 @@
+numpy==1.26.4
+onnx==1.16.0
+onnxruntime==1.17.1
+opencv-python-headless==4.9.0.80
+pillow==10.3.0
+requests==2.31.0
+tqdm==4.66.2
