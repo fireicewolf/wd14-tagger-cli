@@ -74,11 +74,11 @@ Please follow this [doc](https://onnxruntime.ai/docs/execution-providers/#summar
 ## Simple usage
 __Make sure your python venv has been activated first!__
 ```shell
-python wd14_tagger.py your_datasets_path
+python caption.py your_datasets_path
 ```
 To run with more options, You can find help by run with this or see at [Options](#options)
 ```shell
-python wd14_tagger.py -h
+python caption.py -h
 ```
 
 ##  <span id="options">Options</span>
