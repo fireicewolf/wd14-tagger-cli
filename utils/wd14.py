@@ -133,7 +133,7 @@ class Tagger:
             header = rows[0]
             rows = rows[1:]
 
-        if not (header[0] == "tag_id" and header[1] == "name" and header[2] == "category"):
+        if not (header[0] in ("tag_id", "id") and header[1] == "name" and header[2] == "category"):
             self.logger.error(f'Unexpected csv header: {header}')
             raise ValueError
 
@@ -144,6 +144,7 @@ class Tagger:
             general_tags = [row[1] for row in rows[0:] if row[2] == "0"]
 
         else:
+            self.logger.warning(f"{model_name} doesn't support rating tags and character tags.")
             rating_tags = None
             character_tags = None
             general_tags = [row[1] for row in rows[0:]]
@@ -154,34 +155,41 @@ class Tagger:
 
     def preprocess_tags(self):
         args = self.args
+        model_name = str(self.model_name)
 
         rating_tags = self.rating_tags
         character_tags = self.character_tags
         general_tags = self.general_tags
 
         if args.character_tag_expand:
-            self.logger.info(
-                'character_tag_expand Enabled. character tags will be expanded like `character_name, series`.')
+            if model_name.lower().startswith("wd"):
+                self.logger.info(
+                    'character_tag_expand Enabled. character tags will be expanded like `character_name, series`.')
 
-            for i, tag in enumerate(character_tags):
-                if tag.endswith(")"):
-                    tags = tag.split("(")
-                    character_tag = "(".join(tags[:-1])
+                for i, tag in enumerate(character_tags):
+                    if tag.endswith(")"):
+                        tags = tag.split("(")
+                        character_tag = "(".join(tags[:-1])
 
-                    if character_tag.endswith("_"):
-                        character_tag = character_tag[:-1]
-                    series_tag = tags[-1].replace(")", "")
+                        if character_tag.endswith("_"):
+                            character_tag = character_tag[:-1]
+                        series_tag = tags[-1].replace(")", "")
 
-                    character_tags[i] = character_tag + args.caption_separator + series_tag
+                        character_tags[i] = character_tag + args.caption_separator + series_tag
+            else:
+                self.logger.warning(f"{model_name} doesn't support and character tags.")
 
         if args.remove_underscore:
             self.logger.info('remove_underscore Enabled. `_` will be replace to ` `.')
-            rating_tags = [tag.replace("_", " ") if len(tag) > 3 and tag not in kaomojis else tag for tag in
-                           rating_tags]
+            if model_name.lower().startswith("wd"):
+                rating_tags = [tag.replace("_", " ") if len(tag) > 3 and tag not in kaomojis else tag for tag in
+                               rating_tags]
+
+                character_tags = [tag.replace("_", " ") if len(tag) > 3 and tag not in kaomojis else tag for tag in
+                                  character_tags]
+
             general_tags = [tag.replace("_", " ") if len(tag) > 3 and tag not in kaomojis else tag for tag in
                             general_tags]
-            character_tags = [tag.replace("_", " ") if len(tag) > 3 and tag not in kaomojis else tag for tag in
-                              character_tags]
 
         if args.tag_replacement is not None:
             # escape , and ; in tag_replacement: wd14 tag names may contain , and ;
@@ -202,10 +210,10 @@ class Tagger:
                 if source in general_tags:
                     general_tags[general_tags.index(source)] = target
 
-                elif source in character_tags:
+                elif source in character_tags and model_name.lower().startswith("wd"):
                     character_tags[character_tags.index(source)] = target
 
-                elif source in rating_tags:
+                elif source in rating_tags and model_name.lower().startswith("wd"):
                     rating_tags[rating_tags.index(source)] = target
 
         self.rating_tags = rating_tags
@@ -273,13 +281,13 @@ class Tagger:
 
             if not model_name.lower().startswith("wd"):
                 self.logger.warning(f'"{model_name}" don\'t support general_threshold and character_threshold, '
-                                    f'will set them to None')
+                                    f'will set them to threshold value')
                 args.general_threshold = None
                 args.character_threshold = None
 
             self.logger.debug(
                 f'threshold: {args.threshold}') \
-                if args.general_threshold is None and args.general_threshold is None else None
+                if args.general_threshold is None and args.character_threshold is None else None
             self.logger.debug(
                 f'General threshold: {args.general_threshold}') if args.general_threshold is not None else None
             self.logger.debug(
@@ -287,7 +295,9 @@ class Tagger:
 
             # Set general_threshold and character_threshold to general_threshold if not they are not set
             args.general_threshold = args.threshold if args.general_threshold is None else args.general_threshold
-            args.character_threshold = args.threshold if args.character_threshold is None else args.character_threshold
+            args.character_threshold = args.threshold \
+                if args.character_threshold is None and model_name.lower().startswith("wd") \
+                else args.character_threshold
 
             for (image_path, _), prob in zip(path_imgs, probs):
                 # if args.maximum_cut_threshold:
@@ -312,7 +322,7 @@ class Tagger:
                 general_tag_text = ""
 
                 # First 4 labels are ratings, the rest are tags: pick anywhere prediction confidence >= threshold
-                for i, p in enumerate(prob[len(rating_tags):]):
+                for i, p in enumerate(prob[len(rating_tags):] if model_name.lower().startswith("wd") else prob):
                     if i < len(general_tags) and p >= args.general_threshold:
                         tag_name = general_tags[i]
 
@@ -323,7 +333,8 @@ class Tagger:
                             general_tag_text += caption_separator + tag_name
                             combined_tags.append(tag_name)
 
-                    elif i >= len(general_tags) and p >= args.character_threshold:
+                    elif (args.character_threshold is not None
+                          and i >= len(general_tags) and p >= args.character_threshold):
                         tag_name = character_tags[i - len(general_tags)]
 
                         if tag_name not in undesired_tags:
@@ -339,7 +350,8 @@ class Tagger:
                                 combined_tags.append(tag_name)
 
                 # First 4 labels are actually ratings: pick one with argmax
-                if args.add_rating_tags_to_first or args.add_rating_tags_to_last:
+                if (model_name.lower().startswith("wd") and
+                        (args.add_rating_tags_to_first or args.add_rating_tags_to_last)):
                     ratings_probs = prob[:4]
                     rating_index = ratings_probs.argmax()
                     found_rating = rating_tags[rating_index]
@@ -352,6 +364,8 @@ class Tagger:
                             combined_tags.insert(0, found_rating)  # insert to the beginning
                         else:
                             combined_tags.append(found_rating)
+                else:
+                    self.logger.warning(f"{model_name} doesn't support rating tags.")
 
                 # Always put some tags at the beginning
                 if always_first_tags is not None:
@@ -380,10 +394,10 @@ class Tagger:
                         caption_file = os.path.splitext(str(image_path)[len(str(train_datas_dir)):])[0]
 
                     caption_file = caption_file[1:] if caption_file[0] == '/' else caption_file
-                    caption_file = os.path.join(args.custom_caption_save_path, caption_file) + args.caption_extension
-
+                    caption_file = os.path.join(args.custom_caption_save_path, caption_file)
                     # Make dir if not exist.
-                    os.makedirs(os.path.join(str(caption_file)[:len(os.path.basename(caption_file))]), exist_ok=True)
+                    os.makedirs(Path(str(caption_file)[:-len(os.path.basename(caption_file))]), exist_ok=True)
+                    caption_file = Path(str(caption_file) + args.caption_extension)
 
                 else:
                     caption_file = os.path.splitext(image_path)[0] + args.caption_extension
@@ -415,8 +429,9 @@ class Tagger:
                     f.write(tag_text + "\n")
                     self.logger.debug(f"\tImage path: {image_path}")
                     self.logger.debug(f"\tCaption path: {caption_file}")
-                    self.logger.debug(f"\tRating tags: {rating_tag_text}")
-                    self.logger.debug(f"\tCharacter tags: {character_tag_text}")
+                    if model_name.lower().startswith("wd"):
+                        self.logger.debug(f"\tRating tags: {rating_tag_text}")
+                        self.logger.debug(f"\tCharacter tags: {character_tag_text}")
                     self.logger.debug(f"\tGeneral tags: {general_tag_text}")
 
         # Process images to list for batch run

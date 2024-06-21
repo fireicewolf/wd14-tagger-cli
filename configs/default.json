@@ -261,12 +261,12 @@
             "csv_url": "https://huggingface.co/toynya/Z3D-E621-Convnext/main/tags-selected.csv"
         },
         "modelscope": {
-            "repo_id": "fireicewolf/wd-v1-4-vit-tagger",
+            "repo_id": "fireicewolf/Z3D-E621-Convnext",
             "revision": "master",
             "onnx": "model.onnx",
-            "onnx_url": "https://www.modelscope.cn/api/v1/models/fireicewolf/wd-v1-4-convnext-tagger/repo?Revision=master&FilePath=model.onnx",
-            "csv": "selected_tags.csv",
-            "csv_url": "https://www.modelscope.cn/api/v1/models/fireicewolf/wd-v1-4-convnext-tagger/repo?Revision=master&FilePath=selected_tags.csv"
+            "onnx_url": "https://www.modelscope.cn/api/v1/models/fireicewolf/Z3D-E621-Convnext/repo?Revision=master&FilePath=model.onnx",
+            "csv": "tags-selected.csv",
+            "csv_url": "https://www.modelscope.cn/api/v1/models/fireicewolf/Z3D-E621-Convnext/repo?Revision=master&FilePath=tags-selected.csv"
         }
     }
 }

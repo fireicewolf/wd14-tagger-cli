@@ -12,7 +12,7 @@ So this repo born.
 
 ## Model source
 
-All models are from [SmilingWolf](https://huggingface.co/SmilingWolf)(👏👏)
+All models are from [SmilingWolf](https://huggingface.co/SmilingWolf)&Z3D(👏👏)
 
 Huggingface are original sources, modelscope are pure forks from Huggingface(Because HuggingFace was blocked in Some place).
 
@@ -28,6 +28,8 @@ Huggingface are original sources, modelscope are pure forks from Huggingface(Bec
 |  wd-v1-4-convnext-tagger-v2  |  [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2)  |  [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger-v2)  |
 |      wd-v1-4-vit-tagger      |      [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger)      |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-vit-tagger)      |
 |   wd-v1-4-convnext-tagger    |   [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger)    |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger)    |
+|      Z3D-E621-Convnext       |         [HuggingFace](https://huggingface.co/toynya/Z3D-E621-Convnext)         |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/Z3D-E621-Convnext)       |
+
 
 ## TO-DO
 
