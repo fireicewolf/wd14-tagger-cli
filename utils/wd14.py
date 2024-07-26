@@ -350,22 +350,22 @@ class Tagger:
                                 combined_tags.append(tag_name)
 
                 # First 4 labels are actually ratings: pick one with argmax
-                if (model_name.lower().startswith("wd") and
-                        (args.add_rating_tags_to_first or args.add_rating_tags_to_last)):
-                    ratings_probs = prob[:4]
-                    rating_index = ratings_probs.argmax()
-                    found_rating = rating_tags[rating_index]
+                if args.add_rating_tags_to_first or args.add_rating_tags_to_last:
+                    if model_name.lower().startswith("wd"):
+                        ratings_probs = prob[:4]
+                        rating_index = ratings_probs.argmax()
+                        found_rating = rating_tags[rating_index]
 
-                    if found_rating not in undesired_tags:
-                        if args.tags_frequency:
-                            tag_freq[found_rating] = tag_freq.get(found_rating, 0) + 1
-                        rating_tag_text = found_rating
-                        if args.add_rating_tags_to_first:
-                            combined_tags.insert(0, found_rating)  # insert to the beginning
-                        else:
-                            combined_tags.append(found_rating)
-                else:
-                    self.logger.warning(f"{model_name} doesn't support rating tags.")
+                        if found_rating not in undesired_tags:
+                            if args.tags_frequency:
+                                tag_freq[found_rating] = tag_freq.get(found_rating, 0) + 1
+                            rating_tag_text = found_rating
+                            if args.add_rating_tags_to_first:
+                                combined_tags.insert(0, found_rating)  # insert to the beginning
+                            else:
+                                combined_tags.append(found_rating)
+                    else:
+                        self.logger.warning(f"{model_name} doesn't support rating tags.")
 
                 # Always put some tags at the beginning
                 if always_first_tags is not None:
