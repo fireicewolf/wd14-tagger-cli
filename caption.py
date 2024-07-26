@@ -12,7 +12,11 @@ def main(args):
     # Set logger
     workspace_path = os.getcwd()
     data_dir_path = Path(args.data_dir_path)
+
     log_file_path = data_dir_path.parent if os.path.exists(data_dir_path.parent) else workspace_path
+
+    if args.custom_caption_save_path:
+        log_file_path = Path(args.custom_caption_save_path)
 
     log_time = datetime.now().strftime('%Y%m%d_%H%M%S')
     # caption_failed_list_file = f'Caption_failed_list_{log_time}.txt'

@@ -15,8 +15,8 @@ def image_process(image: Image, target_size: int) -> numpy.ndarray:
     original_size = image.size
     desired_size = max(max(original_size), target_size)
 
-    delta_width = desired_size - original_size[1]
-    delta_height = desired_size - original_size[0]
+    delta_width = desired_size - original_size[0]
+    delta_height = desired_size - original_size[1]
     top_padding, bottom_padding = delta_height // 2, delta_height - (delta_height // 2)
     left_padding, right_padding = delta_width // 2, delta_width - (delta_width // 2)
 
@@ -32,6 +32,8 @@ def image_process(image: Image, target_size: int) -> numpy.ndarray:
         borderType=cv2.BORDER_CONSTANT,
         value=[255, 255, 255]  # WHITE
     )
+
+    print(padded_image.shape)
 
     # USE INTER_AREA downscale
     if padded_image.shape[0] > target_size:

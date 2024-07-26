@@ -243,8 +243,10 @@ class Tagger:
             [image for image in glob(path_to_find, recursive=args.recursive)
              if image.lower().endswith(SUPPORT_IMAGE_FORMATS)]),
             key=lambda filename: (os.path.splitext(filename)[0])
-        ) if not os.path.isfile(train_datas_dir) else str(train_datas_dir) \
+        ) if not os.path.isfile(train_datas_dir) else [str(train_datas_dir)] \
             if str(train_datas_dir).lower().endswith(SUPPORT_IMAGE_FORMATS) else None
+
+        self.logger.debug(f"Path for inference: \"{train_datas_dir}\"")
 
         if image_paths is None:
             self.logger.error('Invalid dir or image path!')
@@ -255,6 +257,8 @@ class Tagger:
         model_shape_size = ort_infer_sess.get_inputs()[0].shape[1]
         input_name = ort_infer_sess.get_inputs()[0].name
         label_name = ort_infer_sess.get_outputs()[0].name
+
+        self.logger.debug(f'"{self.model_name}" target shape is {model_shape_size}')
 
         tag_freq = {}
 
