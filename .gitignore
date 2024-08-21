@@ -1,4 +1,5 @@
 __pycache__
+.huggingface
 .idea
-.venv
+.envs
 models

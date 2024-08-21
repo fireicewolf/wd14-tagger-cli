@@ -1,2 +1,2 @@
-modelscope==1.15.0
+modelscope==1.17.1
 -r requirements.txt
