@@ -1,6 +1,5 @@
-numpy==1.26.4
-onnx==1.16.2
-onnxruntime==1.19.0
+onnx==1.17.0
+onnxruntime==1.19.2
 opencv-python-headless==4.10.0.84
 pillow==10.4.0
 requests==2.32.3

@@ -1,6 +1,38 @@
+import glob
+import os
+from pathlib import Path
+from typing import List
+
 import cv2
 import numpy
 from PIL import Image
+
+from utils.logger import Logger
+
+SUPPORT_IMAGE_FORMATS = ("bmp", "jpg", "jpeg", "png", "webp")
+
+
+def get_image_paths(
+        logger: Logger,
+        path: Path,
+        recursive: bool = False,
+) -> List[str]:
+    # Get image paths
+    path_to_find = os.path.join(path, '**') if recursive else os.path.join(path, '*')
+    image_paths = sorted(set(
+        [image for image in glob.glob(path_to_find, recursive=recursive)
+         if image.lower().endswith(SUPPORT_IMAGE_FORMATS)]), key=lambda filename: (os.path.splitext(filename)[0])
+    ) if not os.path.isfile(path) else [str(path)] \
+        if str(path).lower().endswith(SUPPORT_IMAGE_FORMATS) else None
+
+    logger.debug(f"Path for inference: \"{path}\"")
+
+    if image_paths is None:
+        logger.error('Invalid dir or image path!')
+        raise FileNotFoundError
+
+    logger.info(f'Found {len(image_paths)} image(s).')
+    return image_paths
 
 
 def image_process(image: Image, target_size: int) -> numpy.ndarray:
@@ -33,8 +65,6 @@ def image_process(image: Image, target_size: int) -> numpy.ndarray:
         value=[255, 255, 255]  # WHITE
     )
 
-    print(padded_image.shape)
-
     # USE INTER_AREA downscale
     if padded_image.shape[0] > target_size:
         padded_image = cv2.resize(
@@ -51,6 +81,12 @@ def image_process(image: Image, target_size: int) -> numpy.ndarray:
             interpolation=cv2.INTER_LANCZOS4
         )
 
+    return padded_image
+
+
+def image_process_gbr(
+        padded_image: numpy.ndarray
+) -> numpy.ndarray:
     # From PIL RGB to OpenCV GBR
     padded_image = padded_image[:, :, ::-1]
     padded_image = padded_image.astype(numpy.float32)

@@ -2,17 +2,15 @@ import argparse
 import csv
 import os
 import time
-from glob import glob
 from pathlib import Path
 
 import numpy
 from PIL import Image
 from tqdm import tqdm
 
-from utils.image import image_process
+from utils.image import image_process, image_process_gbr, get_image_paths
 from utils.logger import Logger
 
-SUPPORT_IMAGE_FORMATS = ("bmp", "jpg", "jpeg", "png")
 kaomojis = [
     "0_0",
     "(o)_(o)",
@@ -238,21 +236,8 @@ class Tagger:
                              if tag.strip() != ""] if args.always_first_tags is not None else None
 
         # Get image paths
-        path_to_find = os.path.join(train_datas_dir, '**') if args.recursive else os.path.join(train_datas_dir, '*')
-        image_paths = sorted(set(
-            [image for image in glob(path_to_find, recursive=args.recursive)
-             if image.lower().endswith(SUPPORT_IMAGE_FORMATS)]),
-            key=lambda filename: (os.path.splitext(filename)[0])
-        ) if not os.path.isfile(train_datas_dir) else [str(train_datas_dir)] \
-            if str(train_datas_dir).lower().endswith(SUPPORT_IMAGE_FORMATS) else None
-
-        self.logger.debug(f"Path for inference: \"{train_datas_dir}\"")
-
-        if image_paths is None:
-            self.logger.error('Invalid dir or image path!')
-            raise FileNotFoundError
-
-        self.logger.info(f'Found {len(image_paths)} image(s).')
+        image_paths = get_image_paths(logger=self.logger, path=Path(self.args.data_dir_path),
+                                      recursive=self.args.recursive)
 
         model_shape_size = ort_infer_sess.get_inputs()[0].shape[1]
         input_name = ort_infer_sess.get_inputs()[0].name
@@ -445,6 +430,7 @@ class Tagger:
             try:
                 image = Image.open(image_path)
                 image = image_process(image, model_shape_size)
+                image = image_process_gbr(image)
                 pbar.set_description('Processing: {}'.format(image_path if len(image_path) <= 40 else
                                                              image_path[:15]) + ' ... ' + image_path[-20:])
                 pbar.update(1)
@@ -474,8 +460,6 @@ class Tagger:
             self.logger.info('\tTag frequencies:')
             for tag, freq in sorted_tags:
                 self.logger.info(f'\t{tag}: {freq}')
-
-        self.logger.info("Work done!")
 
     def unload_model(
             self

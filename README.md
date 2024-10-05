@@ -1,44 +1,50 @@
 # wd14-tagger-cli
+
 A Python base cli tool for tagging images with wd14 models.
 
 ## Introduce
 
-I make this repo because I want to caption some images cross-platform (On My old MBP, my game win pc or docker base linux cloud-server(like Google colab))
+I make this repo because I want to caption some images cross-platform (On My old MBP, my game win pc or docker base
+linux cloud-server(like Google colab))
 
-But I don't want to install a huge webui just for this little work. And some cloud-service are unfriendly to gradio base ui.
+But I don't want to install a huge webui just for this little work. And some cloud-service are unfriendly to gradio base
+ui.
 
 So this repo born.
-
 
 ## Model source
 
 All models are from [SmilingWolf](https://huggingface.co/SmilingWolf)&Z3D(👏👏)
 
-Huggingface are original sources, modelscope are pure forks from Huggingface(Because HuggingFace was blocked in Some place).
+Huggingface are original sources, modelscope are pure forks from Huggingface(Because HuggingFace was blocked in Some
+place).
 
-|            Model             |                                HuggingFace Link                                |                                     ModelScope Link                                     |
-|:----------------------------:|:------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|
-|     wd-swinv2-tagger-v3      |     [HuggingFace](https://huggingface.co/SmilingWolf/wd-swinv2-tagger-v3)      |     [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-swinv2-tagger-v3)      |
-|       wd-vit-tagger-v3       |       [HuggingFace](https://huggingface.co/SmilingWolf/wd-vit-tagger-v3)       |       [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-vit-tagger-v3)       |
-|    wd-convnext-tagger-v3     |    [HuggingFace](https://huggingface.co/SmilingWolf/wd-convnext-tagger-v3)     |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-convnext-tagger-v3)     |
-|    wd-v1-4-moat-tagger-v2    |    [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-moat-tagger-v2)    |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-moat-tagger-v2)    |
-|   wd-v1-4-swinv2-tagger-v2   |   [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-swinv2-tagger-v2)   |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-swinv2-tagger-v2)   |
-| wd-v1-4-convnextv2-tagger-v2 | [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-convnextv2-tagger-v2) | [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnextv2-tagger-v2) |
-|    wd-v1-4-vit-tagger-v2     |    [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger-v2)     |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-vit-tagger-v2)     |
-|  wd-v1-4-convnext-tagger-v2  |  [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2)  |  [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger-v2)  |
-|      wd-v1-4-vit-tagger      |      [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger)      |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-vit-tagger)      |
-|   wd-v1-4-convnext-tagger    |   [HuggingFace](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger)    |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger)    |
-|      Z3D-E621-Convnext       |         [HuggingFace](https://huggingface.co/toynya/Z3D-E621-Convnext)         |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/Z3D-E621-Convnext)       |
-
+|            Model             |                                Hugging Face Link                                |                                     ModelScope Link                                     |
+|:----------------------------:|:-------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|
+|   wd-eva02-large-tagger-v3   |   [Hugging Face](https://huggingface.co/SmilingWolf/wd-eva02-large-tagger-v3)   |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-eva02-large-tagger-v3)   |
+|    wd-vit-large-tagger-v3    |    [Hugging Face](https://huggingface.co/SmilingWolf/wd-vit-large-tagger-v3)    |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-vit-large-tagger-v3)    |
+|     wd-swinv2-tagger-v3      |     [Hugging Face](https://huggingface.co/SmilingWolf/wd-swinv2-tagger-v3)      |     [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-swinv2-tagger-v3)      |
+|       wd-vit-tagger-v3       |       [Hugging Face](https://huggingface.co/SmilingWolf/wd-vit-tagger-v3)       |       [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-vit-tagger-v3)       |
+|    wd-convnext-tagger-v3     |    [Hugging Face](https://huggingface.co/SmilingWolf/wd-convnext-tagger-v3)     |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-convnext-tagger-v3)     |
+|    wd-v1-4-moat-tagger-v2    |    [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-moat-tagger-v2)    |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-moat-tagger-v2)    |
+|   wd-v1-4-swinv2-tagger-v2   |   [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-swinv2-tagger-v2)   |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-swinv2-tagger-v2)   |
+| wd-v1-4-convnextv2-tagger-v2 | [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-convnextv2-tagger-v2) | [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnextv2-tagger-v2) |
+|    wd-v1-4-vit-tagger-v2     |    [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger-v2)     |    [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-vit-tagger-v2)     |
+|  wd-v1-4-convnext-tagger-v2  |  [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2)  |  [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger-v2)  |
+|      wd-v1-4-vit-tagger      |      [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger)      |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-vit-tagger)      |
+|   wd-v1-4-convnext-tagger    |   [Hugging Face](https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger)    |   [ModelScope](https://www.modelscope.cn/models/fireicewolf/wd-v1-4-convnext-tagger)    |
+|      Z3D-E621-Convnext       |         [Hugging Face](https://huggingface.co/toynya/Z3D-E621-Convnext)         |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/Z3D-E621-Convnext)       |
 
 ## TO-DO
 
 make a simple ui by Jupyter widget(When my lazy cancer cured😊)
 
 ## Installation
-Python 3.10-3.12 works fine. 
+
+Python 3.10-3.12 works fine.
 
 Open a shell terminal and follow below steps:
+
 ```shell
 # Clone this repo
 git clone https://github.com/fireicewolf/wd14-tagger-cli.git
@@ -66,24 +72,32 @@ pip install -U -r cuda12x-requirements.txt
 ```
 
 ### Take a notice
-I have added CUDA, ROCm and OpenVino providers in inference code, but I didn't test if all of them are work(ROCm and OpenVINO).
+
+I have added CUDA, ROCm and OpenVino providers in inference code, but I didn't test if all of them are work(ROCm and
+OpenVINO).
 
 In code the priority of device for inference is CUDA -> ROCm ->OpenVINO ->CPU.
 
 You may need to install extra sdk or pip package for ROCm or OpenVINO to work,
-Please follow this [doc](https://onnxruntime.ai/docs/execution-providers/#summary-of-supported-execution-providers) on [onnxruntime.ai](https://onnxruntime.ai/docs/execution-providers/#summary-of-supported-execution-providers) website.
+Please follow this [doc](https://onnxruntime.ai/docs/execution-providers/#summary-of-supported-execution-providers)
+on [onnxruntime.ai](https://onnxruntime.ai/docs/execution-providers/#summary-of-supported-execution-providers) website.
 
 ## Simple usage
+
 __Make sure your python venv has been activated first!__
+
 ```shell
 python caption.py your_datasets_path
 ```
+
 To run with more options, You can find help by run with this or see at [Options](#options)
+
 ```shell
 python caption.py -h
 ```
 
-##  <span id="options">Options</span>
+## <span id="options">Options</span>
+
 <details>
     <summary>Advance options</summary>
 
@@ -198,22 +212,25 @@ Separator for captions(include space if needed), default is `", "`.
 
 `--tag_replacement TAG_REPLACEMENT`
 
-tag replacement in the format of `"source1,target1;source2,target2; ..."`. 
+tag replacement in the format of `"source1,target1;source2,target2; ..."`.
 
 Escape `,` and `;` with `\`. e.g. `"tag1,tag2;tag3,tag4"`
 
 `--character_tag_expand`
 
 Expand tag tail parenthesis to another tag for character tags.
- 
+
 e.g. `character_name_(series)` will be expanded to `character_name, series`.
 
 </details>
 
 ## Credits
-Most tags process code from [kohya-ss/sd-scripts](https://github.com/kohya-ss/sd-scripts/blob/main/finetune/tag_images_by_wd14_tagger.py)
 
-Some image proces code from [toriato/stable-diffusion-webui-wd14-tagger](https://github.com/Akegarasu/sd-webui-wd14-tagger/blob/master/tagger/dbimutils.py) 
+Most tags process code
+from [kohya-ss/sd-scripts](https://github.com/kohya-ss/sd-scripts/blob/main/finetune/tag_images_by_wd14_tagger.py)
+
+Some image proces code
+from [toriato/stable-diffusion-webui-wd14-tagger](https://github.com/Akegarasu/sd-webui-wd14-tagger/blob/master/tagger/dbimutils.py)
 and [SmilingWolf/wd-tagger](https://huggingface.co/spaces/SmilingWolf/wd-tagger/blob/main/app.py)
 
 Without their works(👏👏), this repo won't exist.

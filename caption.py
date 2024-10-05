@@ -1,9 +1,10 @@
 import argparse
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 
-from utils.download import download
+from utils.download import download_models
 from utils.logger import Logger
 from utils.wd14 import Tagger
 
@@ -12,7 +13,6 @@ def main(args):
     # Set logger
     workspace_path = os.getcwd()
     data_dir_path = Path(args.data_dir_path)
-
     log_file_path = data_dir_path.parent if os.path.exists(data_dir_path.parent) else workspace_path
 
     if args.custom_caption_save_path:
@@ -23,7 +23,6 @@ def main(args):
 
     if os.path.exists(data_dir_path):
         log_name = os.path.basename(data_dir_path)
-
     else:
         print(f'{data_dir_path} NOT FOUND!!!')
         raise FileNotFoundError
@@ -38,7 +37,6 @@ def main(args):
     if str(args.log_level).lower() in 'debug, info, warning, error, critical':
         my_logger = Logger(args.log_level, log_file).logger
         my_logger.info(f'Set log level to "{args.log_level}"')
-
     else:
         my_logger = Logger('INFO', log_file).logger
         my_logger.warning('Invalid log level, set log level to "INFO"!')
@@ -62,7 +60,6 @@ def main(args):
             raise FileNotFoundError
 
         model_path, tags_csv_path = args.custom_onnx_path, args.custom_csv_path
-
     else:
         if args.custom_onnx_path is not None and args.custom_csv_path is None:
             my_logger.warning(f'custom_onnx_path has been set, but custom_csv_path not set. Will ignore these setting!')
@@ -72,43 +69,46 @@ def main(args):
         # Download tagger model and csv
         if os.path.exists(Path(args.models_save_path)):
             models_save_path = Path(args.models_save_path)
-
         else:
             models_save_path = Path(os.path.join(Path(__file__).parent, args.models_save_path))
 
         # config_file = Path(args.models_config)
-        model_path, tags_csv_path = download(
+        model_path, tags_csv_path = download_models(
             logger=my_logger,
+            args=args,
             config_file=config_file,
-            model_name=str(args.model_name),
-            model_site=str(args.model_site),
-            models_save_path=models_save_path,
-            use_sdk_cache=True if args.use_sdk_cache else False,
-            download_method=str(args.download_method)
+            models_save_path=models_save_path
         )
 
     # Init tagger class
     my_tagger = Tagger(logger=my_logger, args=args, model_path=model_path, tags_csv_path=tags_csv_path)
-
     # Load model
     my_tagger.load_model()
-
     # Load tags from csv
     my_tagger.load_csv()
-
     # preprocess tags in advance
     my_tagger.preprocess_tags()
-
     # Inference
+    start_inference_time = time.monotonic()
     my_tagger.run_inference()
-
+    total_inference_time = time.monotonic() - start_inference_time
+    days = total_inference_time // (24 * 3600)
+    total_inference_time %= (24 * 3600)
+    hours = total_inference_time // 3600
+    total_inference_time %= 3600
+    minutes = total_inference_time // 60
+    seconds = total_inference_time % 60
+    days = f"{days} Day(s) " if days > 0 else ""
+    hours = f"{hours} Hour(s) " if hours > 0 or (days and hours == 0) else ""
+    minutes = f"{minutes} Min(s) " if minutes > 0 or (hours and minutes == 0) else ""
+    seconds = f"{seconds:.1f} Sec(s)"
+    my_logger.info(f"All work done with in {days}{hours}{minutes}{seconds}.")
     # Unload model
     my_tagger.unload_model()
 
 
 def setup_args() -> argparse.ArgumentParser:
     args = argparse.ArgumentParser()
-
     args.add_argument(
         'data_dir_path',
         type=str,
@@ -139,8 +139,8 @@ def setup_args() -> argparse.ArgumentParser:
     args.add_argument(
         '--model_name',
         type=str,
-        default='wd-swinv2-v3',
-        help='tagger model name will be used for caption inference, default is "wd-swinv2-v3".'
+        default='wd-eva02-large-tagger-v3',
+        help='tagger model name will be used for caption inference, default is "wd-eva02-large-tagger-v3".'
     )
     args.add_argument(
         '--model_site',
@@ -167,6 +167,16 @@ def setup_args() -> argparse.ArgumentParser:
         choices=["SDK", "URL"],
         default='SDK',
         help='download method via SDK or URL, default is "SDK".'
+    )
+    args.add_argument(
+        '--force_download',
+        action='store_true',
+        help='force download even file exists.'
+    )
+    args.add_argument(
+        '--skip_download',
+        action='store_true',
+        help='skip download if exists.'
     )
     args.add_argument(
         '--custom_onnx_path',
